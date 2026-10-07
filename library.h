@@ -1,0 +1,6 @@
+#ifndef TENSORSANDCO_LIBRARY_H
+#define TENSORSANDCO_LIBRARY_H
+
+void hello();
+
+#endif // TENSORSANDCO_LIBRARY_H
