@@ -102,7 +102,18 @@ class Matrix : public Tensor {
                 throw std::invalid_argument(
                     "Currently cannot calculate determinants for matrices of dimensions greater than 4x4. Sorry! :3"
                     );
+
             }
+        }
+
+        [[nodiscard]] Matrix* transpose() const {
+            auto* result = new Matrix(this->getCols(), this->getRows());
+            for (int i = 0; i < this->getRows(); i++) {
+                for (int j = 0; j < this->getCols(); j++) {
+                    result->setVal(this->getVal({i, j}), {j, 1});
+                }
+            }
+            return result;
         }
 };
 
