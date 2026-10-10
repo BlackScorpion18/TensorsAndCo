@@ -63,15 +63,16 @@ class Matrix : public Tensor {
                 for (int j = 0; j < b.getCols(); j++) {
                     float sum = 0;
                     for (int k = 0; k < this->getCols(); k++) {
-                        sum += this->getVal({i, k}) * b.getVal({k ,j})
+                        sum += this->getVal({i, k}) * b.getVal({k ,j});
                     }
-                    result->setVal(sum, {i, j})
+                    result->setVal(sum, {i, j});
                 }
             }
 
             return result;
         }
 
+        // TODO look for an algorithm that lets me get the determinant of matrices with dimensions of 4x4 or larger
         /**
          * returns the determinant of the matrix. the matrix must be square.
          * @return the determinant of the matrix
@@ -81,7 +82,7 @@ class Matrix : public Tensor {
                 "Matrix must be square in order to compute the determinant"
                 );
 
-            if (this->getRows() == 1) return this->getVal({0, 0})
+            if (this->getRows() == 1) return this->getVal({0, 0});
 
             if (this->getRows() == 2) {
                 return (this->getVal({0, 0}) * this->getVal({1, 1}))
@@ -97,32 +98,11 @@ class Matrix : public Tensor {
                 - (this->getVal({0, 0}) * this->getVal({1, 2}) * this->getVal({2, 1}));
             }
 
-            // using the Bareiss algorithm
             if (this->getRows() >= 4) {
-                int previousPivot = 1;
-                int sign = 1
-                const int n = this->getRows()
-                Matrix mat = *this;
-
-                for (int k = 0; k < n - 2; k++) {
-                    int pivotRow = k;
-                    while (pivotRow < n && this->getVal({pivotRow, k})) {
-                        pivotRow++;
-                    }
-
-                    if pivotRow == n return 0;
-
-                    if (pivotRow != k) {
-                        // row swapping
-                        for (int currCol = 0; currCol < n; currCol++) {
-                            const float temp = mat.getVal({k, currCol});
-                            mat.setVal(mat.getVal(pivotRow, currCol), {k, currCol});
-                            mat.setVal(temp, {pivotRow, currCol});
-                        }
-                    }
-                }
+                throw std::invalid_argument(
+                    "Currently cannot calculate determinants for matrices of dimensions greater than 4x4. Sorry! :3"
+                    );
             }
-
         }
 };
 
