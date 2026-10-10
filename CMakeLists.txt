@@ -6,4 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 add_library(TensorsAndCo STATIC library.cpp
         Tensor.cpp
         Tensor.h
+        Matrix.cpp
+        Matrix.h
 )

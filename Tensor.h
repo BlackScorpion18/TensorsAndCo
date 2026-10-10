@@ -4,17 +4,16 @@
 
 #ifndef TENSORSANDCO_TENSOR_H
 #define TENSORSANDCO_TENSOR_H
+#include <algorithm>
 #include <stdexcept>
 #include <vector>
 
 #endif //TENSORSANDCO_TENSOR_H
 
 class Tensor {
-    private:
+    protected:
         std::vector<int> dimensions;
         std::vector<float> data;
-
-        ~Tensor() = default;
 
         /**
          * returns a "pure" index - that is, an index that actually points to data's location in the vector -
@@ -89,7 +88,14 @@ class Tensor {
         }
 
     public:
+        ~Tensor() = default;
+
         explicit Tensor(const std::vector<int>& dimensions) {
+
+            if (std::ranges::any_of(dimensions.begin(), dimensions.end(),
+            [](int i) {return i <= 0}
+            )) throw std::invalid_argument("Tensor dimensions must not be null nor negative");
+
             this->dimensions = dimensions;
             this->data.resize(this->getSize());
             this->fillZero();
@@ -149,11 +155,32 @@ class Tensor {
         }
 
         /**
+         * subtracts the input tensor from this tensor, with this tensor storing the result.
+         * tensors must be of the same order and dimensions
+         * @param b the tensor to be subtracted from this tensor.
+         */
+        void tensorSubtract(const Tensor& b) {
+
+            for (int i = 0; i < this->getOrder(); i++) {
+                if (this->dimensions.at(i) != b.dimensions.at(i)) throw std::invalid_argument(
+                    "Tensors being added must have the same dimensions"
+                    );
+            }
+
+            for (int i = 0; i < this->getSize(); i++) {
+                this->data.at(i) -= b.data.at(i);
+            }  if (this->getOrder() != b.getOrder()) throw std::invalid_argument(
+                "Tensors being added must be of equal order (first tensor's order is "
+                + std::to_string(this->getOrder()) + ", second tensor's order is " + std::to_string(b.getOrder())
+                );
+        }
+
+        /**
          * gets a value at the index of the tensor. the tensor is ZERO-INDEXED.
          * @param indices a vector of the indices of the tensor to get the value from
          * @return the value at the specified indices
          */
-         [[nodiscard]] float getValueAt(const std::vector<int>& indices) const {
+         [[nodiscard]] float getVal(const std::vector<int>& indices) const {
             if (this->getOrder() != indices.size()) throw std::invalid_argument(
                 "indices passed in for lookup must match the tensor's order (tensor's order: "
                 + std::to_string(this->getOrder()) + ", number of indices: " + std::to_string(indices.size())
@@ -167,7 +194,7 @@ class Tensor {
          * @param value the value to be set at the index
          * @param indices a vector of the indices of the tensor whose value is to be set
          */
-        void setValueAt(float value, const std::vector<int>& indices) {
+        void setVal(float value, const std::vector<int>& indices) {
             if (this->getOrder() != indices.size()) throw std::invalid_argument(
             "indices passed in for lookup must match the tensor's order (tensor's order: "
             + std::to_string(this->getOrder()) + ", number of indices: " + std::to_string(indices.size())
@@ -185,4 +212,5 @@ class Tensor {
                 this->data.at(i) *= scalar;
             }
         }
+
 };
